@@ -2,18 +2,15 @@ import * as mysql from "mysql";
 import { Observable, from } from "rxjs";
 import { Connection } from "../core/connection";
 import { Param } from "../types/param";
+import { Configuration } from "../types/configuration";
 
 export class MySqlServer extends Connection {
 
-
     private connection: any;
 
-    //private _config;
-
-    constructor() {
-        super();
+    constructor(config: Configuration) {
+        super(config);
     }
-
 
     public initTransaction(): void {
         throw new Error("Method not implemented.");

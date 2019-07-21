@@ -1,44 +1,31 @@
 import * as sqlsrv from "mssql";
-import { from, Observable } from 'rxjs';
+import { from, Observable, of } from 'rxjs';
 import { concatMap, map } from 'rxjs/operators';
 import { Param } from '../types/param';
 import { Connection } from '../core/connection';
+import { Configuration } from "../types/configuration";
 
 export class SqlServer extends Connection {
 
-    // private transaction: any;
-    // private istransaction: boolean = false;
-    // private _config;
-    // public squema: string;
-
-    constructor() {
-        super();
+    constructor(config: Configuration) {
+        super(config);
     }
-
-    // get config() {
-    //     return this._config;
-    // }
-
-    // set config(config: any) {
-    //     this._config = config;
-    //     this.squema = config.squema;
-    // }
 
     public initTransaction() {
         this.istransaction = true;
     }
 
-    public commit() {
+    public commit(): Observable<any> {
         this.istransaction = false;
-        return from(this.transaction.commit())
+        return of(this.transaction.commit())
     }
 
-    public rollback() {
+    public rollback(): Observable<any> {
         this.istransaction = false;
-        return from(this.transaction.rollback())
+        return of(this.transaction.rollback())
     }
 
-    
+
 
     public toTable(columns: Array<Param>, data: Array<any>) {
         let tvp = new sqlsrv.Table();

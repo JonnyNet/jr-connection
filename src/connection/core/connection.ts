@@ -1,23 +1,22 @@
 import { Observable } from "rxjs";
 import { Param } from "../types/param";
+import { IConnection } from "./iconnection";
+import { Configuration } from "../types/configuration";
 
-export abstract class Connection {
+export abstract class Connection implements IConnection {
 
     protected transaction: any;
     protected istransaction: boolean = false;
-    protected _config;
-    protected squema: string;
+    private _config;
+    protected schema: string;
 
-    constructor() { }
-
-
-    get config() {
-        return this._config;
+    constructor(config: Configuration) {
+        this._config = config;
+        this.schema = config.schema;
     }
 
-    set config(config: any) {
-        this._config = config;
-        this.squema = config.squema;
+    protected get config() {
+        return this._config;
     }
 
     protected abstract connectionStart(): Observable<any>;
@@ -25,7 +24,6 @@ export abstract class Connection {
     public abstract initTransaction(): void;
     public abstract commit(): Observable<any>;
     public abstract rollback(): Observable<any>;
-
 
     protected abstract executeQuerys(query: string, parametersInput: Array<Param>, parametersOutPut: Array<Param>, typeExecute: any, typeData: any): Promise<any>;
     protected abstract query(com: any, query: string): any;

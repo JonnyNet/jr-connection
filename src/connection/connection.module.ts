@@ -45,14 +45,11 @@ export class ConnectionModule {
             case 'MYSQL':
                 break;
             case 'MSSQL':
-                connection = new SqlServer();
+                connection = new SqlServer(options);
                 break;
             default:
                 throw 'typo of database is not specified';
         }
-
-        let con = new ConnectionService(connection);
-        con.config = options;
-        return con;
+        return new ConnectionService(connection);
     }
 }

@@ -1,24 +1,58 @@
 import { Injectable } from '@nestjs/common';
-import { Configuration } from '../types/configuration';
 import { Connection } from '../core/connection';
+import { IConnection } from '../core/iconnection';
+import { Param } from '../types/param';
+import { Observable } from 'rxjs';
 
 @Injectable()
-export class ConnectionService {
+export class ConnectionService implements IConnection {
 
-    private _config : Configuration;
-    public squema: string;
+    constructor(private connection: Connection) { }
 
-    constructor(private connection: Connection) {
-
+    initTransaction() {
+        this.connection.initTransaction();
     }
 
-    get config() {
-        return this._config;
+    commit(): Observable<any> {
+        return this.connection.commit();
     }
 
-    set config(config: Configuration) {
-        this._config = config;
-        this.squema = config.schema;
+    rollback(): Observable<any> {
+        return this.connection.rollback();
+    }
+
+    returnFirst(query: string, parametersInput: Array<Param> = undefined): Promise<any> {
+        return this.connection.returnFirst(query, parametersInput);
+    }
+
+    returnDataSet(query: string, parametersInput: Array<Param> = undefined): Promise<any> {
+        return this.connection.returnDataSet(query, parametersInput);
+    }
+    returnDataTable(query: string, parametersInput: Array<Param> = undefined): Promise<any> {
+        return this.connection.returnDataTable(query, parametersInput);
+    }
+
+    returnValue(query: string, parametersInput: Array<Param> = undefined): Promise<any> {
+        return this.connection.returnValue(query, parametersInput);
+    }
+
+    returnDataTableProcedure(query: string, parametersInput: Array<Param> = undefined): Promise<any> {
+        return this.connection.returnDataTableProcedure(query, parametersInput);
+    }
+    returnValueProcedure(query: string, parametersInput: Array<Param> = undefined): Promise<any> {
+        return this.connection.returnValueProcedure(query, parametersInput);
+    }
+
+    returnOutPutProcedure(query: string, parametersInput: Array<Param> = undefined, parametersOutPut: Array<Param> = undefined): Promise<any> {
+        return this.connection.returnOutPutProcedure(query, parametersInput, parametersOutPut);
+    }
+
+    returnDataTableAndOutPutProcedure(query: string, parametersInput: Array<Param> = undefined, parametersOutPut: Array<Param> = undefined): Promise<any> {
+        return this.connection.returnDataTableAndOutPutProcedure(query, parametersInput, parametersOutPut);
+    }
+
+    executeQuery(query: string, parametersInput: Array<Param> = undefined): Promise<any> {
+        return this.connection.executeQuery(query, parametersInput);
     }
 
 }
