@@ -46,7 +46,7 @@ export class SqlServer extends Connection {
         return from(connection.connect());
     }
 
-    private async getConectionTransaction(pool: any) {
+    protected async getConectionTransaction(pool: any) {
         if (this.istransaction) {
             if (!this.transaction) {
                 this.transaction = new sqlsrv.Transaction(pool);
@@ -57,7 +57,7 @@ export class SqlServer extends Connection {
             return new Promise((resolve) => resolve(new sqlsrv.Request(pool)));
     }
 
-    private setParemeters(com: any, parameters: Array<Param>, typeparam): any {
+    protected setParemeters(com: any, parameters: Array<Param>, typeparam): any {
         if (parameters) {
             parameters.forEach(item => {
                 com = typeparam(com, item);

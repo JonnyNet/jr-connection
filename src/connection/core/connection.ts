@@ -4,7 +4,7 @@ import { IConnection } from "./iconnection";
 import { Configuration } from "../types/configuration";
 
 export abstract class Connection implements IConnection {
-    
+
     protected transaction: any;
     protected istransaction: boolean = false;
     private _config;
@@ -36,7 +36,12 @@ export abstract class Connection implements IConnection {
     protected abstract dataTableAndOutPut(records: any): any;
     protected abstract void(records: any): any;
 
-    public abstract toTable(columns: Array<Param>, data: Array<any>) : any;
+    protected abstract setParemeters(com: any, parameters: Array<Param>, typeparam): any;
+    protected abstract input(com: any, item: Param): any;
+    protected abstract output(com: any, item: Param): any;
+    protected abstract getConectionTransaction(pool: any): any;
+
+    public abstract toTable(columns: Array<Param>, data: Array<any>): any;
 
     public returnFirst(query: string, parametersInput: Array<Param> = undefined) {
         return this.executeQuerys(query, parametersInput, undefined, this.query, this.first)
