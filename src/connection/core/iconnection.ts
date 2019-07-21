@@ -6,7 +6,7 @@ export interface IConnection {
     initTransaction(): any;
     commit(): Observable<any>;
     rollback(): Observable<any>;
-
+    
     returnFirst(query: string, parametersInput: Array<Param>): Promise<any>;
     returnDataSet(query: string, parametersInput: Array<Param>): Promise<any>;
     returnDataTable(query: string, parametersInput: Array<Param>): Promise<any>;

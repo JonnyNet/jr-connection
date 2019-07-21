@@ -5,6 +5,7 @@ import { Param } from "../types/param";
 import { Configuration } from "../types/configuration";
 
 export class MySqlServer extends Connection {
+    
 
     private connection: any;
 
@@ -19,6 +20,10 @@ export class MySqlServer extends Connection {
         throw new Error("Method not implemented.");
     }
     public rollback(): Observable<any> {
+        throw new Error("Method not implemented.");
+    }
+
+    public toTable(columns: Param[], data: any[]) {
         throw new Error("Method not implemented.");
     }
 

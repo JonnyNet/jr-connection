@@ -25,8 +25,6 @@ export class SqlServer extends Connection {
         return of(this.transaction.rollback())
     }
 
-
-
     public toTable(columns: Array<Param>, data: Array<any>) {
         let tvp = new sqlsrv.Table();
         Object.keys(data[0]).forEach(item => {
@@ -41,13 +39,6 @@ export class SqlServer extends Connection {
         tvp.rows = rowList;
 
         return tvp;
-    }
-
-    public setParams(columns: Array<Param>, data: any) {
-        columns.forEach((item) => {
-            item.value = data[item.name];
-        })
-        return columns;
     }
 
     protected connectionStart(): Observable<any> {

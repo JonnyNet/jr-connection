@@ -20,7 +20,9 @@ export class ConnectionModule {
         options.server = config.DBSERVER;
         options.database = config.DBDATABASE;
         options.schema = config.DBSCHEMA;
-        options.subdomain = config.DBSUBDOMAIN;
+
+        if (config.DBSUBDOMAIN)
+            options.subdomain = config.DBSUBDOMAIN;
 
         const providers = this.createDatabaseProviders(options);
         return ({
