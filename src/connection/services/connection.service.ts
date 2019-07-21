@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { IConnection } from '../core/iconnection.interface';
 import { Configuration } from '../types/configuration';
+import { Connection } from '../core/connection';
 
 @Injectable()
 export class ConnectionService {
@@ -8,7 +8,7 @@ export class ConnectionService {
     private _config : Configuration;
     public squema: string;
 
-    constructor(private connection: IConnection) {
+    constructor(private connection: Connection) {
 
     }
 

@@ -2,27 +2,27 @@ import * as sqlsrv from "mssql";
 import { from, Observable } from 'rxjs';
 import { concatMap, map } from 'rxjs/operators';
 import { Param } from '../types/param';
-import { IConnection } from '../core/iconnection.interface';
+import { Connection } from '../core/connection';
 
-export class SqlServer implements IConnection {
+export class SqlServer extends Connection {
 
-    private transaction: any;
-    private istransaction: boolean = false;
-    private _config;
-    public squema: string;
+    // private transaction: any;
+    // private istransaction: boolean = false;
+    // private _config;
+    // public squema: string;
 
     constructor() {
-
+        super();
     }
 
-    get config() {
-        return this._config;
-    }
+    // get config() {
+    //     return this._config;
+    // }
 
-    set config(config: any) {
-        this._config = config;
-        this.squema = config.squema;
-    }
+    // set config(config: any) {
+    //     this._config = config;
+    //     this.squema = config.squema;
+    // }
 
     public initTransaction() {
         this.istransaction = true;
@@ -38,41 +38,7 @@ export class SqlServer implements IConnection {
         return from(this.transaction.rollback())
     }
 
-    public returnFirst(query: string, parametersInput: Array<Param> = undefined) {
-        return this.executeQuerys(query, parametersInput, undefined, this.query, this.first)
-    }
-
-    public returnDataSet(query: string, parametersInput: Array<Param> = undefined) {
-        return this.executeQuerys(query, parametersInput, undefined, this.query, this.dataSet)
-    }
-
-    public returnDataTable(query: string, parametersInput: Array<Param> = undefined) {
-        return this.executeQuerys(query, parametersInput, undefined, this.query, this.dataTable)
-    }
-
-    public returnValue(query: string, parametersInput: Array<Param> = undefined) {
-        return this.executeQuerys(query, parametersInput, undefined, this.query, this.value)
-    }
-
-    public returnDataTableProcedure(query: string, parametersInput: Array<Param> = undefined) {
-        return this.executeQuerys(query, parametersInput, undefined, this.execute, this.dataTable)
-    }
-
-    public returnValueProcedure(query: string, parametersInput: Array<Param> = undefined) {
-        return this.executeQuerys(query, parametersInput, undefined, this.execute, this.value)
-    }
-
-    public returnOutPutProcedure(query: string, parametersInput: Array<Param> = undefined, parametersOutPut: Array<Param> = undefined) {
-        return this.executeQuerys(query, parametersInput, parametersOutPut, this.execute, this.dataOutPut)
-    }
-
-    public returnDataTableAndOutPutProcedure(query: string, parametersInput: Array<Param> = undefined, parametersOutPut: Array<Param> = undefined) {
-        return this.executeQuerys(query, parametersInput, parametersOutPut, this.execute, this.dataTableAndOutPut)
-    }
-
-    public executeQuery(query: string, parametersInput: Array<Param> = undefined) {
-        return this.executeQuerys(query, parametersInput, undefined, this.query, this.void)
-    }
+    
 
     public toTable(columns: Array<Param>, data: Array<any>) {
         let tvp = new sqlsrv.Table();
@@ -81,7 +47,7 @@ export class SqlServer implements IConnection {
             tvp.columns.add(i.name, i.type);
         });
 
-        let rowList = []; 
+        let rowList = [];
         data.forEach(item => {
             rowList.push(Object.values(item));
         });
@@ -97,8 +63,8 @@ export class SqlServer implements IConnection {
         return columns;
     }
 
-    private connectionStart(): Observable<any> {
-        let connection = new sqlsrv.ConnectionPool(this._config);
+    protected connectionStart(): Observable<any> {
+        let connection = new sqlsrv.ConnectionPool(this.config);
         return from(connection.connect());
     }
 
@@ -122,7 +88,7 @@ export class SqlServer implements IConnection {
         return com;
     }
 
-    private executeQuerys(query: string, parametersInput: Array<Param>, parametersOutPut: Array<Param>, typeExecute: any, typeData: any): Promise<any> {
+    protected executeQuerys(query: string, parametersInput: Array<Param>, parametersOutPut: Array<Param>, typeExecute: any, typeData: any): Promise<any> {
         query = query.split('[]').join(this.config.schema);
         return this.connectionStart().pipe(
             concatMap((pool: any) => {
@@ -141,7 +107,7 @@ export class SqlServer implements IConnection {
         ).toPromise();
     }
 
-    private input(com: any, item: Param) {
+    protected input(com: any, item: Param) {
         if (item.type != null)
             com.input(item.name, item.type, item.value);
         else
@@ -150,7 +116,7 @@ export class SqlServer implements IConnection {
         return com;
     }
 
-    private output(com: any, item: Param) {
+    protected output(com: any, item: Param) {
         if (item.type != null)
             com.output(item.name, item.type, item.value);
         else
@@ -158,29 +124,29 @@ export class SqlServer implements IConnection {
         return com;
     }
 
-    private query(com: any, query: string) {
+    protected query(com: any, query: string) {
         return com.query(query);
     }
 
-    private execute(com: any, query: string) {
+    protected execute(com: any, query: string) {
         return com.execute(query);
     }
 
-    private dataSet(records: any) {
+    protected dataSet(records: any) {
         return records.recordsets;
     }
 
-    private dataTable(records: any) {
+    protected dataTable(records: any) {
         return records.recordset;
     }
 
-    private first(records: any) {
+    protected first(records: any) {
         if (records.recordset.length > 0)
             return records.recordset[0];
         else return undefined;
     }
 
-    private value(records: any) {
+    protected value(records: any) {
         let objoutput = undefined;
         const data = records.recordset;
         if (data.length > 0) {
@@ -190,15 +156,15 @@ export class SqlServer implements IConnection {
         return objoutput;
     }
 
-    private void(records: any) {
+    protected void(records: any) {
         return records;
     }
 
-    private dataOutPut(records: any) {
+    protected dataOutPut(records: any) {
         return records.output;
     }
 
-    private dataTableAndOutPut(records: any) {
+    protected dataTableAndOutPut(records: any) {
         return {
             recordset: records.recordset,
             output: records.output

@@ -1,11 +1,12 @@
-import { Module, DynamicModule } from '@nestjs/common';
+import { Module, DynamicModule, Global } from '@nestjs/common';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 import { Configuration } from './types/configuration';
 import { ConnectionService } from './services/connection.service';
-import { IConnection } from './core/iconnection.interface';
+import { Connection } from './core/connection';
 import { SqlServer } from './sqlserver/sqlserver';
 
+@Global()
 @Module({})
 export class ConnectionModule {
 
@@ -39,7 +40,7 @@ export class ConnectionModule {
     }
 
     public static readConfig(options: Configuration): ConnectionService {
-        let connection: IConnection;
+        let connection: Connection;
         switch (options.type) {
             case 'MYSQL':
                 break;
