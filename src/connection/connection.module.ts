@@ -5,6 +5,7 @@ import { Configuration } from './types/configuration';
 import { ConnectionService } from './services/connection.service';
 import { Connection } from './core/connection';
 import { SqlServer } from './sqlserver/sqlserver';
+import { MySqlServer } from './mysql/mysqlserver';
 
 @Global()
 @Module({})
@@ -45,6 +46,7 @@ export class ConnectionModule {
         let connection: Connection;
         switch (options.type) {
             case 'MYSQL':
+                connection = new MySqlServer(options);
                 break;
             case 'MSSQL':
                 connection = new SqlServer(options);

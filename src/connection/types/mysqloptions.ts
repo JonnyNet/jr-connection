@@ -1,25 +1,18 @@
 import { Configuration } from "./configuration";
 
-export class MsSqlOptions {
+export class MysqlOptions {
+    host: string;
     user: string;
     password: string;
-    server: string;
     database: string;
+    connectionLimit: number = 10;
     subdomain: string;
     schema: string;
-    driver = "tedious";
-    pool = {
-        max: 100,
-        min: 0,
-        idleTimeoutMillis: 100000
-    };
-    options = {
-        encrypt: false
-    };
-
+    acquireTimeout : number = 10000;
+    multipleStatements : boolean = true;
 
     constructor(config: Configuration) {
-        this.server = config.server;
+        this.host = config.server;
         this.user = config.user;
         this.password = config.password;
         this.database = config.database;

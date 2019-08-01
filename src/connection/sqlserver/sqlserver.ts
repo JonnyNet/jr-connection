@@ -4,11 +4,16 @@ import { concatMap, map } from 'rxjs/operators';
 import { Param } from '../types/param';
 import { Connection } from '../core/connection';
 import { Configuration } from "../types/configuration";
+import { MsSqlOptions } from "../types/mssqloptions";
 
 export class SqlServer extends Connection {
 
     constructor(config: Configuration) {
         super(config);
+    }
+
+    protected set config(config: Configuration) {
+        super.config = new MsSqlOptions(config);
     }
 
     public initTransaction() {
@@ -76,7 +81,7 @@ export class SqlServer extends Connection {
                         com = this.setParemeters(com, parametersOutPut, this.output);
                         return from(typeExecute(com, query)).pipe(
                             map((x: any) => {
-                                return typeData(x);
+                                return this.baseReturn(x.recordset, typeData);
                             })
                         );
                     })
@@ -102,40 +107,12 @@ export class SqlServer extends Connection {
         return com;
     }
 
-    protected query(com: any, query: string) {
+    protected query(com: any, query: string, parametersInput: Array<Param> = undefined) {
         return com.query(query);
     }
 
-    protected execute(com: any, query: string) {
+    protected execute(com: any, query: string, parametersInput: Array<Param> = undefined) {
         return com.execute(query);
-    }
-
-    protected dataSet(records: any) {
-        return records.recordsets;
-    }
-
-    protected dataTable(records: any) {
-        return records.recordset;
-    }
-
-    protected first(records: any) {
-        if (records.recordset.length > 0)
-            return records.recordset[0];
-        else return undefined;
-    }
-
-    protected value(records: any) {
-        let objoutput = undefined;
-        const data = records.recordset;
-        if (data.length > 0) {
-            const propety = Object.keys(data[0])[0]
-            objoutput = data[0][propety];
-        }
-        return objoutput;
-    }
-
-    protected void(records: any) {
-        return records;
     }
 
     protected dataOutPut(records: any) {

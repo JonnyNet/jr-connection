@@ -7,12 +7,14 @@ export abstract class Connection implements IConnection {
 
     protected transaction: any;
     protected istransaction: boolean = false;
-    private _config;
-    protected schema: string;
+    protected _config: any;
 
     constructor(config: Configuration) {
+        this.config = config;
+    }
+
+    protected set config(config: any) {
         this._config = config;
-        this.schema = config.schema;
     }
 
     protected get config() {
@@ -26,19 +28,10 @@ export abstract class Connection implements IConnection {
     public abstract rollback(): Observable<any>;
 
     protected abstract executeQuerys(query: string, parametersInput: Array<Param>, parametersOutPut: Array<Param>, typeExecute: any, typeData: any): Promise<any>;
-    protected abstract query(com: any, query: string): any;
-    protected abstract first(records: any): any;
-    protected abstract dataSet(records: any): any;
-    protected abstract dataTable(records: any): any;
-    protected abstract value(records: any): any;
-    protected abstract execute(com: any, query: string): any;
+    protected abstract query(com: any, query: string, parametersInput: Array<Param>): any;
+    protected abstract execute(com: any, query: string, parametersInput: Array<Param>): any;
     protected abstract dataOutPut(records: any): any;
     protected abstract dataTableAndOutPut(records: any): any;
-    protected abstract void(records: any): any;
-
-    protected abstract setParemeters(com: any, parameters: Array<Param>, typeparam): any;
-    protected abstract input(com: any, item: Param): any;
-    protected abstract output(com: any, item: Param): any;
     protected abstract getConectionTransaction(pool: any): any;
 
     public abstract toTable(columns: Array<Param>, data: Array<any>): any;
@@ -77,6 +70,40 @@ export abstract class Connection implements IConnection {
 
     public executeQuery(query: string, parametersInput: Array<Param> = undefined) {
         return this.executeQuerys(query, parametersInput, undefined, this.query, this.void)
+    }
+
+    protected dataSet(records: any) {
+        return records;
+    }
+
+    protected dataTable(records: any) {
+        return records;
+    }
+
+    protected first(records: any) {
+        if (records.length > 0)
+            return records[0];
+        else return undefined;
+    }
+
+    protected value(records: any) {
+        let objoutput = undefined;
+        const data = records;
+        if (data.length > 0) {
+            const propety = Object.keys(data[0])[0]
+            objoutput = data[0][propety];
+        }
+        return objoutput;
+    }
+
+    protected void(records: any) {
+        return;
+    }
+
+    protected baseReturn(records: any, callback: any) {
+        if (records.length > 0) {
+            return callback(records);
+        } else return [];
     }
 
 }
